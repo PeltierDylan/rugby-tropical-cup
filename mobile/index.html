@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/style.css">
+    <title>Rugby Tropical Cup 2023</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <img src="static/logo_horizontal.svg" @click.prevent="currentPage=''" style="cursor: pointer;">
+            <nav>
+                <button href="#" @click.prevent="showEvents">Matchs</button>
+                <button href="#" @click.prevent="showStadiums">Stades</button>
+                <button href="#" @click.prevent="showTeams">Équipes</button>
+            </nav>
+        </header>
+        <main>
+            <template v-if="currentPage === 'events'">
+                <section>
+                    <div class="bgtext">
+                        <h2 id="slide-down">matchs</h2>
+                    </div>
+                    <div class="pres fade-in" id="events" v-for="event in events" :key="event.id">
+                        <h1>{{event.stadium.name}}</h1>
+                        <div v-if="event.team_home.country === null">
+                            <h2 style="color:rgb(217, 169, 111);">EQUIPES A DETERMINER</h2>
+                        </div>
+                        <div v-else>
+                            <h2>{{event.team_home.country}}</h2>
+                            <h1>VS</h1>
+                            <h2>{{event.team_away.country}}</h2>
+                        </div>
+                        <h1>{{formatDate(event.start)}} - {{formatHour(event.start)}}</h1>
+                    </div>
+                </section>
+            </template>
+            <template v-else-if="currentPage === 'stadiums'">
+                <section>
+                    <div class="bgtext">
+                        <h2 id="slide-down">stades</h2>
+                    </div>
+                    <div id="stadiums" class="pres fade-in" v-for="stadium in stadiums" :key="stadium.id">
+                        <h1>{{stadium.name}}</h1>
+                        <h2>{{stadium.location}}</h2>
+                        <iframe
+                            :src="`https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(stadium.longitude - 0.001)},${parseFloat(stadium.latitude - 0.001)},${parseFloat(stadium.longitude + 0.001)},${parseFloat(stadium.latitude + 0.001)}&amp;layer=mapnik`"
+                            width="100%" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
+                        </iframe>
+                    </div>
+                </section>
+            </template>
+            <template v-else-if="currentPage === 'teams'">
+                <section>
+                    <div class="bgtext">
+                        <h2 id="slide-down">équipes</h2>
+                    </div>
+                    <div id="teams" class="pres fade-in" v-for="team in teams" :key="team.id">
+                        <div>
+                            <h1>{{team.country}}</h1>
+                            <div>
+                                <div v-if="team.country_alpha2.length === 2">
+                                    <h2 v-if="team.color_first === 'FFFFFF'" :style="{color: `${team.color_first}`}">
+                                        {{team.country_alpha2[0]}}</h2>
+                                    <h2 v-else
+                                        :style="{color: `${team.color_first}`, textShadow: '0px 0px 15px rgba(255, 255, 255, 0.40)'}">
+                                        {{team.country_alpha2[0]}}</h2>
+
+                                    <h2 v-if="team.color_second === 'FFFFFF'" :style="{color: `${team.color_second}`}">
+                                        {{team.country_alpha2[1]}}</h2>
+                                    <h2 v-else
+                                        :style="{color: `${team.color_second}`, textShadow: '0px 0px 15px rgba(255, 255, 255, 0.40)'}">
+                                        {{team.country_alpha2[1]}}</h2>
+                                </div>
+                                <div v-if="team.country_alpha2.length === 3">
+                                    <h2 v-if="team.color_first === 'FFFFFF'" :style="{color: `${team.color_first}`}">
+                                        {{team.country_alpha2[0]}}</h2>
+                                    <h2 v-else
+                                        :style="{color: `${team.color_first}`, textShadow: '0px 0px 15px rgba(255, 255, 255, 0.40)'}">
+                                        {{team.country_alpha2[0]}}</h2>
+
+                                    <h2 v-if="team.color_second === 'FFFFFF'" :style="{color: `${team.color_second}`}">
+                                        {{team.country_alpha2[1]}}</h2>
+                                    <h2 v-else
+                                        :style="{color: `${team.color_second}`, textShadow: '0px 0px 15px rgba(255, 255, 255, 0.40)'}">
+                                        {{team.country_alpha2[1]}}</h2>
+
+                                    <h2 v-if="team.color_third === 'FFFFFF'" :style="{color: `${team.color_third}`}">
+                                        {{team.country_alpha2[2]}}</h2>
+                                    <h2 v-else
+                                        :style="{color: `${team.color_third}`, textShadow: '0px 0px 15px rgba(255, 255, 255, 0.40)'}">
+                                        {{team.country_alpha2[2]}}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <h1>Surnom : {{team.nickname}}</h1>
+                    </div>
+                </section>
+            </template>
+        </main>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript">
+    const { createApp } = Vue
+
+    createApp({
+        data() {
+            return {
+                currentPage: '',
+                events: null,
+                stadiums: null,
+                teams: null,
+                status: null,
+            };
+        },
+        mounted() {
+            fetch('http://127.0.0.1:8000/api/events')
+                .then(response => response.json())
+                .then(eventData => {
+                    this.events = eventData.events; // mettre à jour le tableau avec les données récupérées
+                })
+                .catch(error => console.error(error));
+            fetch('http://127.0.0.1:8000/api/stadiums')
+                .then(response => response.json())
+                .then(stadiumData => {
+                    this.stadiums = stadiumData.stadiums; // mettre à jour le tableau avec les données récupérées
+                })
+                .catch(error => console.error(error));
+            fetch('http://127.0.0.1:8000/api/teams')
+                .then(response => response.json())
+                .then(teamData => {
+                    this.teams = teamData.teams; // mettre à jour le tableau avec les données récupérées
+                })
+                .catch(error => console.error(error));
+        },
+        methods: {
+            showEvents() {
+                this.activeEvent = true;
+                this.currentPage = 'events';
+            },
+            showStadiums() {
+                this.activeEvent = true;
+                this.currentPage = 'stadiums';
+            },
+            showTeams() {
+                this.activeEvent = true;
+                this.currentPage = 'teams';
+            },
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleString("fr-FR", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                });
+            },
+            formatHour(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleString("fr-FR", {
+                    hour: "numeric",
+                    minute: "numeric",
+                });
+            },
+        },
+    }).mount('#app');
+</script>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rugby Tropical Cup</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#" id="home-link">Accueil</a></li>
+            <li><a href="#" id="rugby-link">Rugby Tropical Cup</a></li>
+        </ul>
+    </nav>
+    <div id="content">
+        <h1>Accueil</h1>
+        <p>Bienvenue sur le site de la Rugby Tropical Cup.</p>
+    </div>
+    <script>
+        // Récupération des éléments du menu
+        const homeLink = document.getElementById('home-link');
+        const rugbyLink = document.getElementById('rugby-link');
+
+        // Ajout des écouteurs d'événements sur les clics
+        homeLink.addEventListener('click', () => loadPage('home'));
+        rugbyLink.addEventListener('click', () => loadPage('rugby'));
+
+        // Fonction pour charger les données de la page correspondante
+        async function loadPage(pageName) {
+            // Construction de l'URL API correspondante
+            const apiUrl = `/api/events?name=Rugby Tropical Cup`;
+
+            try {
+                // Chargement des données JSON
+                const response = await fetch(apiUrl);
+                const eventData = await response.json();
+
+                // Construction du HTML à partir des données
+                let html = '';
+                if (pageName === 'home') {
+                    html = `
+                        <h1>Accueil</h1>
+                        <p>Bienvenue sur le site de la Rugby Tropical Cup.</p>
+                    `;
+                } else if (pageName === 'rugby') {
+                    html = `
+                        <h1>Rugby Tropical Cup</h1>
+                        <h2>Informations</h2>
+                        <ul>
+                            <li>Date : ${eventData[0].date}</li>
+                            <li>Lieu : ${eventData[0].stadium.name}</li>
+                        </ul>
+                        <h2>Billets</h2>
+                        <ul>
+                            ${eventData[0].tickets.map(ticket => `<li>${ticket.category} - ${ticket.price} ${ticket.currency}</li>`).join('')}
+                        </ul>
+                    `;
+                }
+
+                // Affichage du HTML dans la zone de contenu
+                const content = document.getElementById('content');
+                content.innerHTML = html;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

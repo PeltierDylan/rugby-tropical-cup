@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <title>Rugby Tropical Cup 2023</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+    <header>
+        <img src="logo_horizontal.svg">
+        <div class="bgtext">
+            <h1>Scanneur de billets</h1>
+        </div>
+    </header>
+    <div id="app">
+        <section id="scanner">
+
+            <button v-if="ticket" id="start" @click="retry">
+                <h1>Refaire</h1>
+            </button>
+            <button v-else id="start" @click="startScanner">
+                <h1>Démarrer</h1>
+            </button>
+            <div v-if="!ticket">
+                <div id="leftTop" class="invisible"></div>
+                <div id="rightTop" class="invisible"></div>
+                <div id="leftBottom" class="invisible"></div>
+                <div id="rightBottom" class="invisible"></div>
+
+                <video>
+
+
+                </video>
+            </div>
+        </section>
+        <section v-if="ticket" id="results">
+            <div>
+                <h2><b>UUID :</b> {{ticket.id}}</h2>
+                <hr>
+                <div>
+                    <h2><b>CATEGORIE :</b> {{ticket.category}}</h2>
+                    <h2><b>SIEGE :</b> {{ticket.seat}}</h2>
+                </div>
+                <h2><b>PRIX : </b>{{ticket.price}} {{ticket.currency}}</h2>
+                <h2><b>MATCH :</b> {{ticket.event.team_home.country}} VS
+                    {{ticket.event.team_away.country}}</h2>
+                <h2><b>LIEU :</b> {{ticket.event.stadium.name}} à {{ticket.event.stadium.location}}
+                </h2>
+                <hr>
+                <h2>{{formatDate(ticket.event.start)}} <br> {{formatHour(ticket.event.start)}}</h2>
+            </div>
+
+        </section>
+    </div>
+    <script src="qr-scanner.umd.min.js"></script>
+    <script src="app.js"></script>
+    <script type="text/javascript">
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    ticket: null,
+
+                };
+            },
+            methods: {
+                async getTicket(idTicket) {
+
+                    fetch(`http://127.0.0.1:8000/api/ticket/${idTicket}`)
+                        .then(response => response.json())
+                        .then(ticketData => {
+                            this.ticket = ticketData.tickets[0]; // mettre à jour le tableau avec les données récupérées
+                        })
+                        .catch(error => console.error(error));
+                    // const element = document.querySelector('#results');
+                    // try {
+                    //     element.classList.remove('invisible');
+                    // } catch (error) {
+                    // }
+                },
+                startScanner() {
+                    let currentTicket = null;
+                    this.videoElem = document.querySelector("#scanner video");
+                    this.qrScanner = new QrScanner(this.videoElem, (result) => {
+                        if (currentTicket == result) {
+                            return;
+                        }
+                        currentTicket = result;
+                        this.getTicket(result);
+                    });
+                    this.qrScanner.setCamera("environment");
+                    this.qrScanner.start();
+                    const elements = document.querySelectorAll('.invisible');
+                    elements.forEach(element => {
+                        element.classList.remove('invisible');
+                        element.classList.add('visible');
+                    });
+                },
+                retry() {
+                    this.ticket = null;
+                    const elements = document.querySelectorAll('.visible');
+                    elements.forEach(element => {
+                        element.classList.remove('visible');
+                        element.classList.add('invisible');
+                    });
+                    const element = document.querySelector('#results');
+                    element.classList.add('invisible');
+                },
+                formatDate(dateString) {
+                    const date = new Date(dateString);
+                    return date.toLocaleString("fr-FR", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                    });
+                },
+                formatHour(dateString) {
+                    const date = new Date(dateString);
+                    return date.toLocaleString("fr-FR", {
+                        hour: "numeric",
+                        minute: "numeric",
+                    });
+                },
+            },
+        }).mount('#app');
+        ;
+    </script>
+</body>
+
+</html>
