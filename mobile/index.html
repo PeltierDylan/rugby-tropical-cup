@@ -120,19 +120,19 @@
             };
         },
         mounted() {
-            fetch('http://127.0.0.1:8000/api/events')
+            fetch('https://pylfolio.ovh:8000/api/events')
                 .then(response => response.json())
                 .then(eventData => {
                     this.events = eventData.events; // mettre à jour le tableau avec les données récupérées
                 })
                 .catch(error => console.error(error));
-            fetch('http://127.0.0.1:8000/api/stadiums')
+            fetch('https://pylfolio.ovh:8000/api/stadiums')
                 .then(response => response.json())
                 .then(stadiumData => {
                     this.stadiums = stadiumData.stadiums; // mettre à jour le tableau avec les données récupérées
                 })
                 .catch(error => console.error(error));
-            fetch('http://127.0.0.1:8000/api/teams')
+            fetch('https://pylfolio.ovh:8000/api/teams')
                 .then(response => response.json())
                 .then(teamData => {
                     this.teams = teamData.teams; // mettre à jour le tableau avec les données récupérées

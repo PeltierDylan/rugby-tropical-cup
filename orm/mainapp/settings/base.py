@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'corsheaders',
+    'sslserver'
 ]
 
 MIDDLEWARE = [
@@ -69,7 +70,7 @@ DATABASES = {
         'NAME': "djangoorm",
         "USER": "djangoorm",
         "PASSWORD": "sjd53f1LRUi7iw9mN0Es",
-        "HOST": "66.70.188.220",
+        "HOST": "localhost",
         "PORT": "3306",
     }
 }
