@@ -3,12 +3,13 @@ from django.views.generic import FormView
 from django.urls import reverse_lazy
 from django.db.utils import IntegrityError
 
-from mainapp.models import Newsletter
+from mainapp.models import Newsletter, Team
 
 class ContactForm(forms.Form):
     name = forms.CharField(label="Nom")
     email = forms.EmailField(label="Adresse e-mail")
     consent = forms.BooleanField(label="J'accepte le partage de ces données avec les partenaires officiels de la Rugby Tropical Cup", required=False)
+    team = forms.ModelChoiceField(label="Equipe favorite", queryset=Team.objects.all(), required=False)
 
 class NewsletterView(FormView):
     template_name = "newsletter.html"
@@ -34,10 +35,11 @@ class NewsletterView(FormView):
         name = form.cleaned_data["name"]
         email = form.cleaned_data["email"]
         consent = form.cleaned_data["consent"]
+        team = form.cleaned_data["team"]
 
         try:
             # On essaye d'ajouter les informations dans la BDD
-            self.db_add_subscriber(email, name, consent)
+            self.db_add_subscriber(email, name, consent, team)
         except IntegrityError:
             # En cas d'email déjà inscrit dans la base de données (= doublon),
             # on attrape l'erreur IntegrityError qui en découle afin
@@ -57,6 +59,6 @@ class NewsletterView(FormView):
         return Newsletter.objects.count
 
     # Ajoute un nouvel inscrit dans la base de données
-    def db_add_subscriber(self, email, name, consent):
-        new_subscriber = Newsletter(email=email, name=name, consent=consent)
+    def db_add_subscriber(self, email, name, consent, team):
+        new_subscriber = Newsletter(email=email, name=name, consent=consent, team=team)
         new_subscriber.save(force_insert=True)

@@ -17,6 +17,7 @@
                 <button href="#" @click.prevent="showEvents">Matchs</button>
                 <button href="#" @click.prevent="showStadiums">Stades</button>
                 <button href="#" @click.prevent="showTeams">Équipes</button>
+                <button href="#" @click.prevent="showEventsOceania">Matchs en Oceanie</button>
             </nav>
         </header>
         <main>
@@ -25,15 +26,40 @@
                     <div class="bgtext">
                         <h2 id="slide-down">matchs</h2>
                     </div>
-                    <div class="pres fade-in" id="events" v-for="event in events" :key="event.id">
+                    <div class="pres fade-in" id="events" v-for="event in events"                        
+                        :key="event.id">
                         <h1>{{event.stadium.name}}</h1>
                         <div v-if="event.team_home.country === null">
                             <h2 style="color:rgb(217, 169, 111);">EQUIPES A DETERMINER</h2>
                         </div>
                         <div v-else>
                             <h2>{{event.team_home.country}}</h2>
+                            <span>{{event.team_home.cont}}</span>
                             <h1>VS</h1>
                             <h2>{{event.team_away.country}}</h2>
+                            <span>{{event.team_away.cont}}</span>
+                        </div>
+                        <h1>{{formatDate(event.start)}} - {{formatHour(event.start)}}</h1>
+                    </div>
+                </section>
+            </template>
+            <template v-if="currentPage === 'eventsOceania'">
+                <section>
+                    <div class="bgtext">
+                        <h2 id="slide-down">matchs</h2>
+                    </div>
+                    <div class="pres fade-in" id="events" v-for="event in eventsOceania"                        
+                        :key="event.id">
+                        <h1>{{event.stadium.name}}</h1>
+                        <div v-if="event.team_home.country === null">
+                            <h2 style="color:rgb(217, 169, 111);">EQUIPES A DETERMINER</h2>
+                        </div>
+                        <div v-else>
+                            <h2>{{event.team_home.country}}</h2>
+                            <span>{{event.team_home.cont}}</span>
+                            <h1>VS</h1>
+                            <h2>{{event.team_away.country}}</h2>
+                            <span>{{event.team_away.cont}}</span>
                         </div>
                         <h1>{{formatDate(event.start)}} - {{formatHour(event.start)}}</h1>
                     </div>
@@ -117,22 +143,29 @@
                 stadiums: null,
                 teams: null,
                 status: null,
+                eventsOceania:null,
             };
         },
         mounted() {
-            fetch('https://pylfolio.ovh:8000/api/events')
+            fetch('http://127.0.0.1:8000/api/events')
                 .then(response => response.json())
                 .then(eventData => {
                     this.events = eventData.events; // mettre à jour le tableau avec les données récupérées
                 })
                 .catch(error => console.error(error));
-            fetch('https://pylfolio.ovh:8000/api/stadiums')
+            fetch('http://127.0.0.1:8000/api/eventsOceania')
+                .then(response => response.json())
+                .then(eventOceaniaData => {
+                    this.eventsOceania = eventOceaniaData.eventsOceania; // mettre à jour le tableau avec les données récupérées
+                })
+                .catch(error => console.error(error));
+            fetch('http://127.0.0.1:8000/api/stadiums')
                 .then(response => response.json())
                 .then(stadiumData => {
                     this.stadiums = stadiumData.stadiums; // mettre à jour le tableau avec les données récupérées
                 })
                 .catch(error => console.error(error));
-            fetch('https://pylfolio.ovh:8000/api/teams')
+            fetch('http://127.0.0.1:8000/api/teams')
                 .then(response => response.json())
                 .then(teamData => {
                     this.teams = teamData.teams; // mettre à jour le tableau avec les données récupérées
@@ -152,6 +185,10 @@
                 this.activeEvent = true;
                 this.currentPage = 'teams';
             },
+            showEventsOceania() {
+                this.activeEvent = true;
+                this.currentPage = 'eventsOceania';
+            },
             formatDate(dateString) {
                 const date = new Date(dateString);
                 return date.toLocaleString("fr-FR", {
@@ -169,5 +206,5 @@
                 });
             },
         },
-    }).mount('#app');
+        }).mount('#app');
 </script>

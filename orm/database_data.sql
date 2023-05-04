@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS `mainapp_team` (
     `nickname` varchar(100) NOT NULL,
     `color_first` varchar(6) NOT NULL,
     `color_second` varchar(6) NOT NULL,
+    `cont` varchar(100) NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
 
@@ -58,18 +59,20 @@ CREATE TABLE IF NOT EXISTS `mainapp_newsletter` (
     `email` char(100) NOT NULL,
     `name` char(100) NOT NULL,
     `consent` boolean NOT NULL DEFAULT 0,
-    PRIMARY KEY (`email`)
+    `team_id` bigint(20) DEFAULT NULL,
+    PRIMARY KEY (`email`),
+    KEY `k_team_id` (`team_id`),
+    CONSTRAINT `fk_team_id` FOREIGN KEY (`team_id`) REFERENCES `mainapp_team` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
-
-INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`) VALUES (1, 'Angleterre', 'gb', 'XV de la Rose', 'FFFFFF', 'A71931');
-INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`) VALUES (2, 'Fidji', 'fj', 'The Flying Fijians', 'FFFFFF', '99B7E8');
-INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`) VALUES (3, 'Japon', 'jp', 'The Cherry Blossoms', 'FFFFFF', 'E70012');
-INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`) VALUES (4, 'Samoa', 'ws', 'Manu Samoa', '264282', '181A1B');
-INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`) VALUES (5, 'Australie', 'au', 'Les Wallabies', 'FAD068', '8C6505');
-INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`) VALUES (6, 'Tonga', 'to', 'Ikale Tahi', 'FF0000', '181A1B');
-INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`) VALUES (7, 'Nouvelle-Zélande', 'nz', 'All Blacks', 'FFFFFF', '000000');
-INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`) VALUES (8, 'Afrique du Sud', 'za', 'Les Springboks', 'FFB300', '0C3D1B');
+INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`, `cont`) VALUES (1, 'Angleterre', 'gb', 'XV de la Rose', 'FFFFFF', 'A71931', 'Europe');
+INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`, `cont`) VALUES (2, 'Fidji', 'fj', 'The Flying Fijians', 'FFFFFF', '99B7E8', 'Océanie');
+INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`, `cont`) VALUES (3, 'Japon', 'jp', 'The Cherry Blossoms', 'FFFFFF', 'E70012', 'Asie');
+INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`, `cont`) VALUES (4, 'Samoa', 'ws', 'Manu Samoa', '264282', '181A1B', 'Océanie');
+INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`, `cont`) VALUES (5, 'Australie', 'au', 'Les Wallabies', 'FAD068', '8C6505', 'Océanie');
+INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`, `cont`) VALUES (6, 'Tonga', 'to', 'Ikale Tahi', 'FF0000', '181A1B', 'Océanie');
+INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`, `cont`) VALUES (7, 'Nouvelle-Zélande', 'nz', 'All Blacks', 'FFFFFF', '000000', 'Océanie');
+INSERT INTO `mainapp_team` (`id`, `country`, `country_alpha2`, `nickname`, `color_first`, `color_second`, `cont`) VALUES (8, 'Afrique du Sud', 'za', 'Les Springboks', 'FFB300', '0C3D1B', 'Afrique');
 
 INSERT INTO `mainapp_stadium` (`id`, `name`, `location`, `latitude`, `longitude`) VALUES (1, 'Ajinomoto Stadium', 'Tokyo', 35.664051, 139.527175);
 INSERT INTO `mainapp_stadium` (`id`, `name`, `location`, `latitude`, `longitude`) VALUES (2, 'Toyota Stadium', 'Tokyo', 35.084470, 137.170923);
@@ -102,5 +105,5 @@ INSERT INTO `mainapp_ticket` (`id`, `event_id`, `category`, `seat`, `price`, `cu
 INSERT INTO `mainapp_ticket` (`id`, `event_id`, `category`, `seat`, `price`, `currency`) VALUES ('de725ef3-a2e6-430b-b5eb-adb4e203b142', 8, 'Platinum', 'P-12', 8000, 'JPY');
 INSERT INTO `mainapp_ticket` (`id`, `event_id`, `category`, `seat`, `price`, `currency`) VALUES ('41a9c6bc-b4f6-49ed-ab34-5aecddbf3cc5', 8, 'Platinum', 'P-51', 60, 'EUR');
 
-INSERT INTO `mainapp_newsletter` (`email`, `name`, `consent`) VALUES ('seblebest@mail.dev', 'Sébastien CHANAL', 1);
-INSERT INTO `mainapp_newsletter` (`email`, `name`, `consent`) VALUES ('guy@liguerugby.dev', 'Guy NODESS', 0);
+INSERT INTO `mainapp_newsletter` (`email`, `name`, `consent`, `team_id`) VALUES ('seblebest@mail.dev', 'Sébastien CHANAL', 1, 2);
+INSERT INTO `mainapp_newsletter` (`email`, `name`, `consent`, `team_id`) VALUES ('guy@liguerugby.dev', 'Guy NODESS', 0, 1);

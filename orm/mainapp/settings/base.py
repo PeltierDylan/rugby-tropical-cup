@@ -23,7 +23,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'corsheaders',
-    'sslserver'
 ]
 
 MIDDLEWARE = [
@@ -63,13 +62,24 @@ TEMPLATES = [
 # Database
 # https://docs.djangoproject.com/fr/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         # !!! A remplacer avec vos informations de connexion !!!
+#         'NAME': "djangoorm",
+#         "USER": "djangoorm",
+#         "PASSWORD": "sjd53f1LRUi7iw9mN0Es",
+#         "HOST": "66.70.188.220",
+#         "PORT": "3306",
+#     }
+# }
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         # !!! A remplacer avec vos informations de connexion !!!
         'NAME': "djangoorm",
-        "USER": "djangoorm",
-        "PASSWORD": "sjd53f1LRUi7iw9mN0Es",
+        "USER": "root",
+        "PASSWORD": "root",
         "HOST": "localhost",
         "PORT": "3306",
     }

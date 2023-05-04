@@ -29,13 +29,36 @@ class EventApi(View):
                 },
                 "team_home": {
                     "country": event.team_home.country if event.team_home else None,
+                    "cont": event.team_home.cont if event.team_home else None,
                 },
                 "team_away": {
                     "country": event.team_away.country if event.team_away else None,
+                    "cont": event.team_away.cont if event.team_away else None,
                 },
                 "start": event.start,
             })
-        return JsonResponse({"events": results})
+        return JsonResponse({"events": results})    
+class EventOceaniaApi(View):
+    def get(self, request):
+        results: list = []
+        data = Event.objects.filter(team_home__isnull=False, team_away__isnull=False,team_away__cont="Oceania")
+        for eventOceania in data:
+            results.append({
+                "stadium": {
+                    "id": eventOceania.stadium.id,
+                    "name": eventOceania.stadium.name,
+                },
+                "team_home": {
+                    "country": eventOceania.team_home.country if eventOceania.team_home else None,
+                    "cont": eventOceania.team_home.cont if eventOceania.team_home else None,
+                },
+                "team_away": {
+                    "country": eventOceania.team_away.country if eventOceania.team_away else None,
+                    "cont": eventOceania.team_away.cont if eventOceania.team_away else None,
+                },
+                "start": eventOceania.start,
+            })
+        return JsonResponse({"eventsOceania": results})    
 
 class TeamsApi(View):
     def get(self, request):
@@ -49,6 +72,7 @@ class TeamsApi(View):
                 "nickname": team.nickname,
                 "color_first": team.color_first,
                 "color_second": team.color_second,
+                "cont": team.cont,
             })
         return JsonResponse({"teams": results})
 

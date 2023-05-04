@@ -8,6 +8,7 @@ class Team(models.Model):
     # Couleurs stockées au format hexadécimal
     color_first = models.CharField(max_length=6)
     color_second = models.CharField(max_length=6)
+    cont = models.CharField(max_length=100)
 
     def __str__(self):
         return self.country
